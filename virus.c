@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/errno.h>
+#include <sys/sendfile.h>
 
 int main(int argc, char** argv) {
     
@@ -38,11 +39,11 @@ int main(int argc, char** argv) {
     }
 
     // get info about files
-    struct stat* tempfilestat;
-    fstat(tempfile, tempfilestat);
+    struct stat tempfilestat;
+    fstat(tempfile, &tempfilestat);
 
-    struct stat* seedfilestat;
-    fstat(seedfile, seedfilestat);
+    struct stat seedfilestat;
+    fstat(seedfile, &seedfilestat);
     
     char magic[4] = {0xde, 0xad, 0xbe, 0xef};
     char buf[4];
@@ -50,13 +51,15 @@ int main(int argc, char** argv) {
     // find the hosts start location
     do {
         read(seedfile, buf, 4);
-    } while ( memcmp(magic, read, 4) != 0 );
+    } while ( memcmp(magic, buf, 4) != 0 );
 
     // where are we?
     off_t hoststart = lseek(seedfile, 0, SEEK_CUR);
 
-    printf("%ld", hoststart);
+    printf("%ld\n", hoststart);
 
-    //sendfile(tempfile, seedfile, hoststart, );
+    off_t hoststartcopy = hoststart;
+
+    sendfile(tempfile, seedfile, &hoststartcopy, seedfilestat.st_size - hoststartcopy);
 
 }
