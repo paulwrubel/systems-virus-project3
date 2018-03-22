@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include <
+
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -11,32 +14,49 @@ int main(int argc, char** argv) {
 
     char tempfilename[20];
     uid_t ruid = getuid();
-    sprintf(tempfilename, "/tmp/host.%ud", ruid);
+    sprintf(tempfilename, "/tmp/host.%u", ruid);
 
     // attempt to create new file
-    int fd = open(filename, O_CREAT | O_RDWR, S_IRWXU);
+    int tempfile = open(filename, O_CREAT | O_WRITE, S_IRWXU);
 
     // check if that file was already there
-    if (fd == -1 && errno == EEXIST) {
+    if (tempfile == -1 && errno == EEXIST) {
         // file exists! attempt to delete and leave
         unlink(tempfilename);
 
         // close our descriptor so the file is *officially* deleted
-        close(tempfilename);
-        return 0;
+        close(tempfile);
+        return 1;
     }
 
-    byte magic[4] = {0xde, 0xad, 0xbe, 0xef};
-    byte buf[4];
+    // open ourselves
+    int seedfile = open(argv[0], O_READ);
+
+    if (seedfile == -1) {
+        printf("Error: seedfile cannot be opened\n");
+        return 1;
+    }
+
+    // get info about files
+    stat* tempfilestat;
+    fstat(tempfile, tempfilestat);
+
+    stat* seedfilestat;
+    fstat(seedfile, seedfilestat);
+    
+    char magic[4] = {0xde, 0xad, 0xbe, 0xef};
+    char buf[4];
 
     // find the hosts start location
     do {
-        read(fd, buf, 4);
-    } while(memcmp(magic, read, 4) != 0);
+        read(seedfile, buf, 4);
+    } while ( memcmp(magic, read, 4) != 0 );
 
     // where are we?
-    off_t hoststart = lseek(fd, 0, SEEK_CUR);
+    off_t hoststart = lseek(seedfile, 0, SEEK_CUR);
 
+    printf("%d", hoststart);
 
+    //sendfile(tempfile, seedfile, hoststart, );
 
 }
