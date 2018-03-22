@@ -18,20 +18,22 @@ int main( int argc, char** argv){
     fd = open( argv[1], O_RDWR);
 
     if(fd == -1){
-        printf("open failed\n");
+        printf("Error: open failed\n");
+        perror("open");
         return -1;
     }
 
     check = fstat(fd, &filestats);
 
     if(check == -1){
-        printf("fstat failed\n");
+        printf("Error: fstat failed\n");
+        perror("fstat");
         return -1;
     }
 
     lastModified = filestats.st_mtime;
     
-    printf("This file was last modified: %s\n", ctime(&lastModified));
-    return 1;
+    printf("This file was last modified: %s", ctime(&lastModified));
+    return 0;
 
 }
