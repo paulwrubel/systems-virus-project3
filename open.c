@@ -7,8 +7,7 @@
 int open(const char *pathname, int flags){
     
     int fd;
-    int bytesread;
-    char buf[1];
+    int check;
     int virus;
 
     //default: there is no virus.
@@ -32,30 +31,49 @@ int open(const char *pathname, int flags){
     char buffer[filesize];
 
     //Figure out if there is a virus (deadbeef present?)
-    bytesread = read(fd, buf, 1);
 
-    if(bytesread == -1){
-        printf("read failed\n");
-        return -1;
-    }
+    char magic[4] = {0xde, 0xad, 0xbe, 0xef};
+    char buf[4];
 
-    while(bytesread != 0){
-        if(buf[0] == "\xde"){
-            read(fd, buf, 1);
-            if(buf[0] == "\xad"){
-                read(buf[0] == "\xbe");
-                if(buf[0] == "\xef"){
-                    //Virus found!
-                    virus = 1;
-                    break;
-                }
-            }
+    do{
+        check = read(pathname, buf, 4);
+        if(check == -1){
+           printf("Deadbeef Read Failed\n");
+           return -1;
         }
-        read(fd, buf, 1);
-    }
+        else if (check == 0){
+            printf("Reached end of file. File not infected.\n");
+            return 0;
+        }
+
+    } while ( memcmp(magic, buf, 4) != 0);
 
     //Extract virus and place in /tmp/.pid.fd.ruid
+    
+    off_t virusstop = lseek(pathname, 0, SEEK_CUR);
+    pid_t pid = getpid();
+    uid_t ruid = getuid();
+    char filebuf[100];
+    sprintf(filebuf, "/tmp/.%u.%d.%u", pid, fd, ruid);    
+    int fd2;
 
+    if((fd2 = syscall(__NR_open, filebuf, O_RDWR, O_CREATE)) == -1){
+        printf("Virus file open failed.\n");
+        return -1;
+    }
+    off_t zero = 0;
+    ssize_t newfile = sendfile(filebuf, pathname, &zero, virusstop);
+    
     
 
+
+
+
+
+
+
+
 }
+
+
+
