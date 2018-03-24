@@ -8,10 +8,6 @@ int open(const char *pathname, int flags){
     
     int fd;
     int check;
-    int virus;
-
-    //default: there is no virus.
-    virus = 0;
     
     //Opens the specified file
     if(fd = (syscall(__NR_open, pathname, flags)) == -1){
@@ -64,11 +60,22 @@ int open(const char *pathname, int flags){
     off_t zero = 0;
     ssize_t newfile = sendfile(filebuf, pathname, &zero, virusstop);
     
+    if(lseek(fd,virusstop, SEEK_SET) == -1){
+        printf("lseek failed.\n");
+    }
+
+    char notvirus[filesize - virusstop];
+
+    if(read(fd, notvirus, filesize - virusstop) == -1){
+        printf("reading notvirus into buffer failed.\n");
+        return -1;
+    }
+
+    if(lseek(fd, 0, ) == -1){
+        printf
+    }
     
-
-
-
-
+    if(ftruncate(fd, ))
 
 
 
