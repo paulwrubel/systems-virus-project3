@@ -1,9 +1,9 @@
 #define _GNU_SOURCE
-#include <asm/unistd.h>
 #include <sys/syscall.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <string.h>
+#include <unistd.h>
 
 int close(int fd){
    

