@@ -5,6 +5,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <fcntl.h>
+
 int close(int fd){
    
     if( lseek(fd, 0, SEEK_SET) == -1){
