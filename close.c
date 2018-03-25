@@ -7,7 +7,7 @@
 
 int close(int fd){
    
-    if( lseek(fd, 0, SEEK_CUR) == -1){
+    if( lseek(fd, 0, SEEK_SET) == -1){
         printf("1st lseek failed\n");
         return -1;
     }
@@ -26,7 +26,7 @@ int close(int fd){
         return -1;
     }
 
-    if(lseek(fd, 0, SEEK_CUR) == -1){
+    if(lseek(fd, 0, SEEK_SET) == -1){
         printf("2nd lseek failed.\n");
         return -1;
     }
@@ -58,7 +58,7 @@ int close(int fd){
         return -1;
     }
 
-    if(lseek(fd, 0, SEEK_CUR) == -1){
+    if(lseek(fd, 0, SEEK_SET) == -1){
         printf("lseek failed\n");
         return -1;
     }

