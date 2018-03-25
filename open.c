@@ -89,6 +89,11 @@ int open(const char *pathname, int flags, ...){
         printf("close failed\n");
         return -1;
     }
+
+    if(lseek(fd, 0, SEEK_SET) == -1){
+        printf("last lseek failed\n");
+        return -1;
+    }
     
     return fd;
 }
