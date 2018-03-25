@@ -20,6 +20,7 @@ int main( int argc, char** argv){
     if(fd == -1){
         printf("Error: open failed\n");
         perror("open");
+        close(fd);
         return -1;
     }
 
@@ -28,12 +29,14 @@ int main( int argc, char** argv){
     if(check == -1){
         printf("Error: fstat failed\n");
         perror("fstat");
+        close(fd);
         return -1;
     }
 
     lastModified = filestats.st_mtime;
     
     printf("This file was last modified: %s", ctime(&lastModified));
+    close(fd);
     return 0;
 
 }
