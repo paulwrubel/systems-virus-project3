@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
 
     int file = open(argv[1], O_RDONLY);
 
-    if (file == 1) {
+    if (file == -1) {
         return -1;
     }
 
