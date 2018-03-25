@@ -43,7 +43,7 @@ int open(const char *pathname, int flags, ...){
         }
         else if (check == 0){
             printf("Reached end of file. File not infected.\n");
-            return 0;
+            return fd;
         }
 
     } while ( memcmp(magic, buf, 4) != 0);
