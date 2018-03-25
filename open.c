@@ -1,8 +1,11 @@
 #define _GNU_SOURCE
-#include <asm/unistd.h>
 #include <sys/syscall.h>
 #include <stdio.h>
 #include <sys/types.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <string.h>
 
 int open(const char *pathname, int flags){
     
