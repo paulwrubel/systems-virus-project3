@@ -21,8 +21,12 @@ seed: host virus
 	cat build/host >> build/seed
 	chmod a+x build/seed
 
-wrappers:
-
+wrappers: useOpen.c useClose.c open.c close.c 
+	mkdir -p build
+	gcc -c open.c
+	gcc -o useOpen useOpen.c open.c
+	gcc -c close.c
+	gcc -o useClose useClose.c close.c
 test-wrappers:
 
 clean:
