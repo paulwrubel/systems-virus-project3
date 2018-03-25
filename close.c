@@ -76,7 +76,7 @@ int close(int fd){
         printf("unlink failed.\n");
         return -1;
     }
-    if(close(fd2) == -1){
+    if(syscall(__NR_close, fd2) == -1){
         return -1;
     }
 
