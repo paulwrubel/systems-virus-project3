@@ -51,25 +51,29 @@ int close(int fd){
     }
 
     long int filesize2 = filestats2.st_size;
-    char buf2[filesize2];
 
-    if(read(fd2, buf2, filesize2) == -1){
-        printf("read2 failed.\n");
+    if(ftruncate(fd, filesize + filesize2) == -1){
+        printf("truncate failed\n");
         return -1;
     }
 
-    if(lseek(fd, 0, SEEK_SET) == -1){
-        printf("lseek failed\n");
-        return -1;
-    }
+    off_t offset = 0;
 
-    if(write(fd, buf2, filesize2) == -1){
-        printf("write virus back on failed.\n");
+    if(sendfile(fd, fd2, &offset, filesize2) == -1){
+        printf("sendfile failed.\n");
         return -1;
     }
 
     if(write(fd, buf, filesize) == -1){
-        printf("write host back in failed.\n");
+        printf("write failed\n");
+        return -1;
+    }
+
+    if(unlink(filename) == -1){
+        printf("unlink failed.\n");
+        return -1;
+    }
+    if(close(fd2) == -1){
         return -1;
     }
 
