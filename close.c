@@ -7,17 +7,19 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/sendfile.h>
-
+#include <sys/errno.h>
 int close(int fd){
-   
+
+    errno = 0;
+
     if( lseek(fd, 0, SEEK_SET) == -1){
-        printf("1st lseek failed\n");
+//        printf("1st lseek failed\n");
         return -1;
     }
 
     struct stat filestats;
     if(fstat(fd, &filestats) == -1){
-        printf("fstat failed.\n");
+  //      printf("fstat failed.\n");
         return -1;
     }
 
@@ -25,12 +27,12 @@ int close(int fd){
     char buf[filesize];
 
     if(read(fd, buf, filesize) == -1){
-        printf("read failed\n");
+    //    printf("read failed\n");
         return -1;
     }
 
     if(lseek(fd, 0, SEEK_SET) == -1){
-        printf("2nd lseek failed.\n");
+      //  printf("2nd lseek failed.\n");
         return -1;
     }
 
@@ -43,6 +45,9 @@ int close(int fd){
     int fd2;
 
     if((fd2 = syscall(__NR_open, filename, O_RDWR)) == -1){
+        if(errno == ENOENT){
+            return syscall(__NR_close, fd);
+        }
         printf("open failed.\n");
         return -1;
     }

