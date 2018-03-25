@@ -85,12 +85,12 @@ int open(const char *pathname, int flags, ...){
         return -1;
     }
  
-    if(close(fd2) == -1 || close(fd) == -1){
+    if(close(fd2) == -1){
         printf("close failed\n");
         return -1;
     }
     
-    return syscall(__NR_open, pathname, flags);
+    return fd;
 }
 
 
