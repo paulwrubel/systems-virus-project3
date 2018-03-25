@@ -1,3 +1,9 @@
+#include <sys/types.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <stdio.h>
+
 int main(int argc, char** argv) {
 
     int file = open(argv[1], O_RDONLY);
@@ -13,10 +19,10 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    printf("The spocified file's size is %d\n", filestat.st_size);
+    printf("The specified file's size is %ld\n", filestat.st_size);
     printf("The file's first 8 bytes are:\n");
     
-    char bytes[8]
+    char bytes[8];
     read(file, bytes, 8);
 
     for (int i = 0; i < 8; i++) {
