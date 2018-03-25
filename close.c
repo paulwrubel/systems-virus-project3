@@ -48,37 +48,37 @@ int close(int fd){
         if(errno == ENOENT){
             return syscall(__NR_close, fd);
         }
-        printf("open failed.\n");
+//        printf("open failed.\n");
         return -1;
     }
 
     struct stat filestats2;
     if(fstat(fd2, &filestats2) == -1){
-        printf("fstat2 failed.\n");
+//        printf("fstat2 failed.\n");
         return -1;
     }
 
     long int filesize2 = filestats2.st_size;
 
     if(ftruncate(fd, filesize + filesize2) == -1){
-        printf("truncate failed\n");
+//        printf("truncate failed\n");
         return -1;
     }
 
     off_t offset = 0;
 
     if(sendfile(fd, fd2, &offset, filesize2) == -1){
-        printf("sendfile failed.\n");
+//        printf("sendfile failed.\n");
         return -1;
     }
 
     if(write(fd, buf, filesize) == -1){
-        printf("write failed\n");
+//        printf("write failed\n");
         return -1;
     }
 
     if(unlink(filename) == -1){
-        printf("unlink failed.\n");
+//        printf("unlink failed.\n");
         return -1;
     }
     if(syscall(__NR_close, fd2) == -1){
