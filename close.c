@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <string.h>
 #include <unistd.h>
-
+#include <sys/stat.h>
 int close(int fd){
    
     if( lseek(fd, 0, SEEK_SET) == -1){
