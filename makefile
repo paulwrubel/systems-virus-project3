@@ -7,11 +7,11 @@ default:
 
 host: host.c
 	mkdir -p build
-	gcc -std=c99 -o build/host host.c
+	gcc -std=c99 -o host host.c
 
 virus: virus.c
 	mkdir -p build
-	gcc -std=c99 -o build/virus virus.c
+	gcc -std=c99 -o virus virus.c
 	
 seed: host virus
 	mkdir -p build
@@ -21,13 +21,11 @@ seed: host virus
 	cat build/host >> build/seed
 	chmod a+x build/seed
 
-wrappers: useOpen.c useClose.c open.c close.c 
+wrappers: open.c close.c 
 	mkdir -p build
 	gcc -c open.c
-	gcc -o build/useOpen useOpen.c open.c
 	gcc -c close.c
-	gcc -o build/useClose useClose.c close.c
-test-wrappers:
-
+test-wrappers: tstWrappers
+	gcc -o tstWrappers tstWrappers.c
 clean:
-	rm -r build
+	rm tstWrappers seed virus host open.o close.o
