@@ -21,7 +21,7 @@ seed: host virus
 wrappers: open.c close.c 
 	gcc -c open.c
 	gcc -c close.c
-test-wrappers: tstWrappers
-	gcc -o tstWrappers tstWrappers.c
+test-wrappers: tstWrappers.c wrappers
+	gcc -o tstWrappers tstWrappers.c open.o close.o
 clean:
 	rm tstWrappers seed virus host open.o close.o
