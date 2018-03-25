@@ -43,6 +43,9 @@ int open(const char *pathname, int flags, ...){
         }
         else if (check == 0){
             printf("Reached end of file. File not infected.\n");
+            if(lseek(fd, 0, SEEK_SET) == -1){
+                return -1;
+            }
             return fd;
         }
 
