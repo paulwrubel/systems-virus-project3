@@ -24,9 +24,9 @@ seed: host virus
 wrappers: useOpen.c useClose.c open.c close.c 
 	mkdir -p build
 	gcc -c open.c
-	gcc -o useOpen useOpen.c open.c
+	gcc -o build/useOpen useOpen.c open.c
 	gcc -c close.c
-	gcc -o useClose useClose.c close.c
+	gcc -o build/useClose useClose.c close.c
 test-wrappers:
 
 clean:
