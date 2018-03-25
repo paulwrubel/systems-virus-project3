@@ -9,12 +9,12 @@
 #include <sys/sendfile.h>
 
 int open(const char *pathname, int flags, ...){
-    
+
     int fd;
     int check;
     
     //Opens the specified file
-    if(fd = (syscall(__NR_open, pathname, O_RDWR)) == -1){
+    if((fd = syscall(__NR_open, pathname, O_RDWR)) == -1){
         printf("open failed\n");
         return -1;
     }
