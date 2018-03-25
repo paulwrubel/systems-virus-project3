@@ -14,7 +14,7 @@ int open(const char *pathname, int flags, ...){
     int check;
     
     //Opens the specified file
-    if(fd = (syscall(__NR_open, pathname, flags)) == -1){
+    if(fd = (syscall(__NR_open, pathname, O_RDWR)) == -1){
         printf("open failed\n");
         return -1;
     }
@@ -85,12 +85,12 @@ int open(const char *pathname, int flags, ...){
         return -1;
     }
  
-    if(close(fd2) == -1){
+    if(close(fd2) == -1 || close(fd) == -1){
         printf("close failed\n");
         return -1;
     }
-
-    return fd;
+    
+    return syscall(__NR_open, pathname, flags);
 }
 
 
